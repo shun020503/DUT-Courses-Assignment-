@@ -1,0 +1,36 @@
+*Separate Chaining:
+Advantages:
+- Simple implementation.
+- No limit on load factor.
+Disadvantages:
+- Memory overhead for linked lists.
+- Potential cache performance issues.
+
+*Open Addressing:
+Advantages:
+- Simple (Linear probing).
+- Better cache performance.
+Disadvantages:
+- Clustering issues (Linear probing).
+- Complex (Quadratic probing, Double hashing).
+
+*Chaining with BST:
+Advantages:
+- Efficient searches with a balanced tree.
+- Maintains sorted order.
+Disadvantages:
+- Increased complexity and memory usage.
+
+*Cuckoo Hashing:
+Advantages:
+- Constant worst-case time for operations.
+Disadvantages:
+- Complex to implement.
+- Limited by the constant factor.
+
+*Robin Hood Hashing:
+Advantages:
+- Reduces variance in probe lengths.
+Disadvantages:
+- Increased complexity.
+- Theoretical advantages may not always translate to real-world gains.

@@ -1,0 +1,3 @@
+Pre-order:   A B D G I E C F H J K
+In-order:    D G I B E A H J F K C
+Post-order:  I G D E B J K H F C A

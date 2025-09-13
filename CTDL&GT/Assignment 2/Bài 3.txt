@@ -1,0 +1,1 @@
+The complexity of the function is O(n)

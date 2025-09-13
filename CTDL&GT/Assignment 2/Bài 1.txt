@@ -1,0 +1,4 @@
+a. O(n^2)
+b. O(n^2)
+c. O(nlogn)
+d. O(2^n)

@@ -1,0 +1,5 @@
+The minimum number of keys hashed to their home positions using linear probing in a 5-cell array is 1. Example: {2, 5, 1} results in [5, 1, 2, , ].
+
+
+
+

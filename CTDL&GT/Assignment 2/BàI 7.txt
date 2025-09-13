@@ -1,0 +1,4 @@
+a. There are n multiplication in the code
+b. No, there is no solution that requires fewer multiplications than 
+the provided algorithm to compute `a^n` for arbitrary values of `a` and `n`. 
+The provided algorithm already uses the minimum number of multiplications, which is O(n) multiplications.

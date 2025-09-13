@@ -1,0 +1,115 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Node {
+    string key;
+    string value;
+    Node* next;
+    Node(const string& k, const string& v) : key(k), value(v), next(nullptr) {}
+};
+
+class LinkedList {
+public:
+    Node* head;
+    LinkedList() : head(nullptr) {}
+    void insert(const string& key, const string& value) {
+        Node* newNode = new Node(key, value);
+        if (!head) {
+            head = newNode;
+        } else {
+            Node* current = head;
+            while (current->next) {
+                current = current->next;
+            }
+            current->next = newNode;
+        }
+    }
+    Node* search(const string& key) {
+        Node* current = head;
+        while (current) {
+            if (current->key == key) {
+                return current;
+            }
+            current = current->next;
+        }
+        return nullptr;
+    }
+};
+
+class HashMap {
+private:
+    static const int TABLE_SIZE = 100;
+    LinkedList table[TABLE_SIZE];
+
+    int hashFunction(const string& key) {
+        int sum = 0;
+        for (char ch : key) {
+            sum += static_cast<int>(ch);
+        }
+        return sum % TABLE_SIZE;
+    }
+
+public:
+    void insert(const string& key, const string& value) {
+        int index = hashFunction(key);
+        table[index].insert(key, value);
+    }
+
+    Node* search(const string& key) {
+        int index = hashFunction(key);
+        return table[index].search(key);
+    }
+};
+
+bool isValidUsername(const std::string& username) {
+    if (username.length() > 15) return false;
+    for (char ch : username)
+        if (!isalnum(ch) && ch != '_') return false;
+    return true;
+}
+
+bool isValidPassword(const std::string& password) {
+    bool hasUppercase = false;
+    bool hasLowercase = false;
+    bool hasDigit = false;
+    bool hasSpecialChar = false;
+    for (char ch : password)
+        if (isupper(ch)) hasUppercase = true;
+        else if (islower(ch)) hasLowercase = true;
+        else if (isdigit(ch)) hasDigit = true;
+        else if (ispunct(ch)) hasSpecialChar = true;
+    return hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
+}
+
+int main() {
+    ifstream inputFile("user.txt");
+    if (!inputFile) {
+        cerr << "Error opening user.txt file." << endl;
+        return 1;
+    }
+    HashMap hashTable;
+    while (!inputFile.eof()) {
+        string username, password;
+        inputFile >> username >> password;
+        if (isValidUsername(username) && isValidPassword(password)) {
+            hashTable.insert(username, password);
+        } else {
+            cerr << "Invalid username/password: " << username << endl;
+        }
+    }
+    inputFile.close();
+    while (true) {
+        string enteredUsername, enteredPassword;
+        cout << "Username: ";
+        if (!(cin >> enteredUsername)) break;
+        cout << "Password: ";
+        if (!(cin >> enteredPassword)) break;
+        Node* result = hashTable.search(enteredUsername);
+        if (result && result->value == enteredPassword) {
+            cout << "Authentication successful" << endl;
+        } else {
+            cout << "Authentication failure" << endl;
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,6 @@
+Rehashing to a smaller table is typically considered when the load factor (λ) drops below a certain threshold, such as 0.5.
+Therefore, the table should be rehashed when it becomes approximately half empty to efficiently utilize space.
+
+
+
+

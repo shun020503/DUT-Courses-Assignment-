@@ -1,0 +1,3 @@
+a. Addition: O(n^2)
+b. Multiplication: O(n^3)
+c. Transposition: O(n^2)
