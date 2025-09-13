@@ -1,0 +1,29 @@
+int sensorPin = A0;
+int bientro = A1;
+void setup() {
+  Serial.begin(9600);  
+}
+void loop() {
+ int reading = analogRead(sensorPin);  
+ int bt = analogRead(bientro);
+ float voltage = reading * 5.0 / 1023.0; 
+ float volbt = bt * 5.0 / 1023.0;
+ //float res = (5.0/ volbt - 1.0) * 10000.0;
+ float res1 = (5.0 - volbt) / (5.0 / 10000.0);
+ float res2 = 10000.0 - res1;
+ // ở trên mình đã giới thiệu, cứ mỗi 10mV = 1 độ C.
+ float temp = voltage * 100.0;
+ Serial.print(voltage);
+ Serial.print("V -> ");
+ Serial.print(temp);
+ Serial.println(" °C");
+ Serial.print("ADC: ");
+ Serial.println(bt);
+ Serial.print("Voltage: ");
+ Serial.println(volbt);
+ Serial.print("Resistance (2-1): ");
+ Serial.println(res1, 2);
+ Serial.print("Resistance (2-3): ");
+ Serial.println(res2, 2);
+ delay(1000);
+}

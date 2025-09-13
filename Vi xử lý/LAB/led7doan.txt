@@ -1,0 +1,39 @@
+int latchPin = 9; //pin 12 on 595
+int dataPin = 8; //pin 14 on 595
+int clockPin = 10; //pin 11 on 595
+int pinButton1 = 7; //pin button
+int pinButton2 = 6; //pin button
+int value[] = {63, 6, 91, 79, 102, 109, 125, 7, 127, 111};
+int i =0; 
+
+void setup(){
+  pinMode(latchPin, OUTPUT);
+  pinMode(dataPin, OUTPUT);
+  pinMode(clockPin, OUTPUT);
+  pinMode(pinButton1, INPUT_PULLUP);
+  pinMode(pinButton2, INPUT_PULLUP);
+  digitalWrite(latchPin, LOW);
+  shiftOut(dataPin, clockPin, MSBFIRST, value[0]);
+  digitalWrite(latchPin,HIGH);
+  delay(200);
+}
+
+void loop(){
+
+  if(digitalRead(pinButton1) == HIGH) {
+      i++;
+      if (i==10) i=0;
+      digitalWrite(latchPin, LOW);
+      shiftOut(dataPin, clockPin, MSBFIRST, value[i]);
+      digitalWrite(latchPin, HIGH);
+      delay(200);
+  }
+  if(digitalRead(pinButton2) == HIGH) {
+      i--;
+      if (i==-1) i=9;
+      digitalWrite(latchPin, LOW);
+      shiftOut(dataPin, clockPin, MSBFIRST, value[i]);
+      digitalWrite(latchPin, HIGH);
+      delay(200);
+  }
+}

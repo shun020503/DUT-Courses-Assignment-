@@ -1,0 +1,106 @@
+#include <WiFi.h>
+#include <ESP32Servo.h>
+
+// Network credentials
+const char* ssid = "TestWifi";
+const char* password = "123456789";
+
+WiFiServer server(80);
+
+String header;
+Servo myservo;
+
+// GPIO Pins
+const int output26 = 26;
+const int output27 = 27;
+
+unsigned long currentTime = millis();
+unsigned long previousTime = 0;
+const long timeoutTime = 2000;
+
+void setup() {
+  Serial.begin(115200);
+  myservo.attach(output26);
+  digitalWrite(output26, LOW);
+  digitalWrite(output27, LOW);
+
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("\nWiFi connected.");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+  server.begin();
+}
+
+void loop(){
+  WiFiClient client = server.available();
+  if (client) {
+    currentTime = millis();
+    previousTime = currentTime;
+    Serial.println("New Client.");
+    String currentLine = "";
+    while (client.connected() && currentTime - previousTime <= timeoutTime) {
+      currentTime = millis();
+      if (client.available()) {
+        char c = client.read();
+        Serial.write(c);
+        header += c;
+        if (c == '\n') {
+          if (currentLine.length() == 0) {
+            client.println("HTTP/1.1 200 OK");
+            client.println("Content-type:text/html");
+            client.println("Connection: close");
+            client.println();
+            
+            // Form for GPIO 26
+            client.println("<!DOCTYPE html><html>");
+            client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+            client.println("<link rel=\"icon\" href=\"data:,\">");
+            client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}</style></head>");
+            client.println("<body><h1>ESP32 Web Server</h1>");
+            client.println("<p>GPIO 26 - Set Value</p>");
+            client.println("<form action=\"/set26\">");
+            client.println("<input type=\"number\" name=\"value\" min=\"0\" max=\"180\"><input type=\"submit\" value=\"Set\"></form>");
+
+            // Form for GPIO 27
+            client.println("<p>GPIO 27 - Set Value</p>");
+            client.println("<form action=\"/set27\">");
+            client.println("<input type=\"number\" name=\"value\" min=\"0\" max=\"180\"><input type=\"submit\" value=\"Set\"></form>");
+            client.println("</body></html>");
+
+            // Handle form submission for GPIO 26
+            if (header.indexOf("GET /set26?value=") >= 0) {
+              int startPos = header.indexOf("value=") + 6;
+              int endPos = header.indexOf(' ', startPos);
+              String valueString = header.substring(startPos, endPos);
+              int value = valueString.toInt();
+              myservo.write(value);
+              delay(500);
+              myservo.write(0);
+              delay(500);
+            }
+
+            // Handle form submission for GPIO 27
+            // Add similar code for GPIO 27 if needed
+
+            client.println();
+            break;
+          } else {
+            currentLine = "";
+          }
+        } else if (c != '\r') {
+          currentLine += c;
+        }
+      }
+    }
+    header = "";
+    client.stop();
+    Serial.println("Client disconnected.");
+  }
+}

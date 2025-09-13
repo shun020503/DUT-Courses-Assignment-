@@ -1,0 +1,70 @@
+int latchPin = 9; //pin 12 on 595
+int dataPin = 8; //pin 14 on 595
+int clockPin = 10; //pin 11 on 595
+int pinButton1 = 2; //pin button
+int pinButton2 = 3; //pin button
+int value[] = {63, 6, 91, 79, 102, 109, 125, 7, 127, 111};
+int i =0; 
+volatile unsigned long last_interrupt_time = 0;
+unsigned long interrupt_time;
+
+void setup(){
+  Serial.begin(9600);
+  pinMode(latchPin, OUTPUT);
+  pinMode(dataPin, OUTPUT);
+  pinMode(clockPin, OUTPUT);
+  pinMode(pinButton1, INPUT_PULLUP);
+  pinMode(pinButton2, INPUT_PULLUP);
+  output(value[0]);
+  attachInterrupt(digitalPinToInterrupt(pinButton1), button1Interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(pinButton2), button2Interrupt, RISING);
+}
+
+void loop(){
+  String input = "";
+  if (Serial.available()) {
+    input = Serial.readStringUntil('\n');
+    if(input.startsWith("DISPLAY: ")) {
+      char numChar = input.charAt(9);
+      char numChar1 = input.charAt(10);
+      if(isDigit(numChar)) {
+        i = numChar - '0';
+        if (i>=0 and i<=9 and !isdigit(numChar1)) {
+          output(value[i]);
+        }
+        else Serial.println("Invalid Number!");
+      }
+    }
+    else Serial.println("Invalid Input!");
+  }
+}
+
+void output(int val)
+{
+  digitalWrite(latchPin, LOW);
+  shiftOut(dataPin, clockPin, MSBFIRST, val);
+  digitalWrite(latchPin, HIGH);
+  Serial.print("DISPLAY: ");
+  Serial.println(i);
+  delay(300);
+}
+
+void button1Interrupt() {
+  interrupt_time = millis();
+  if (interrupt_time - last_interrupt_time > 100) {
+    i++;
+    if (i == 10) i = 0;
+    output(value[i]);
+  }
+  last_interrupt_time = interrupt_time;
+}
+
+void button2Interrupt() {
+  interrupt_time = millis();
+  if (interrupt_time - last_interrupt_time > 100) {
+    i--;
+    if (i == -1) i = 9;
+    output(value[i]);
+  }
+  last_interrupt_time = interrupt_time;
+}
