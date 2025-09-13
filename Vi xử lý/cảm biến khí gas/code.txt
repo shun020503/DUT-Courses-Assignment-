@@ -1,0 +1,24 @@
+int pin = A0;
+int ledsafe = 7;
+int ledwarning = 6;
+void setup() {
+  Serial.begin(9600);
+  pinMode(ledsafe, OUTPUT);
+  pinMode(ledwarning, OUTPUT);
+  pinMode(pin, INPUT);
+}
+void loop () {
+  int val = analogRead(pin);
+  Serial.println(val);
+  if (val>100) {
+    digitalWrite(ledsafe, LOW);
+    digitalWrite(ledwarning, HIGH);
+    delay(500);
+  }
+  else {
+    digitalWrite(ledsafe,HIGH);
+    digitalWrite(ledwarning, LOW);
+    delay(500);
+  }
+  delay(500);
+}

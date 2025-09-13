@@ -1,0 +1,31 @@
+#include "DHT.h"            
+const int DHTPIN = 4;      
+const int DHTTYPE = DHT11;  
+#include <Stepper.h>
+
+const int stepsPerRevolution = 2048; // Số bước 1 vòng quay đối với động cơ bước 28BYJ-48 nên 1 bước quay là 2048/360 độ
+
+Stepper myStepper = Stepper(stepsPerRevolution, 8, 10, 9, 11); // Cài đặt động cơ bước và cấu hình chân cắm.
+//Stepper myStepper1 = Stepper(stepsPerRevolution, 10, 8, 9, 11);
+DHT dht(DHTPIN, DHTTYPE);
+void setup() {
+  Serial.begin(9600);
+  myStepper.setSpeed(15);
+  dht.begin();       
+}
+
+void loop() {
+  float h = dht.readHumidity();    
+  float t = dht.readTemperature(); 
+  if (t>30) { 
+      myStepper.step(341);// muốn quay được 90 thuận thì ta lấy 90 nhân với 2048/360 ra 512 chính là số bước cần quay để động cơ quay 90 độ
+      delay(1000);
+  }
+  //myStepper.step(341);
+  Serial.print("Nhiet do: ");
+  Serial.println(t);               
+  Serial.print("Do am: ");
+  Serial.println(h);  
+  Serial.println();               
+  delay(1000);                     
+}

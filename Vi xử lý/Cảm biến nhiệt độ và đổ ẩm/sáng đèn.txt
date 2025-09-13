@@ -1,0 +1,27 @@
+#include "DHT.h"            
+const int DHTPIN = 4;      
+const int DHTTYPE = DHT11;  
+int led = 13;
+
+DHT dht(DHTPIN, DHTTYPE);
+void setup() {
+  Serial.begin(9600);
+  pinMode(led, OUTPUT);
+  dht.begin();       
+}
+
+void loop() {
+  float h = dht.readHumidity();    
+  float t = dht.readTemperature(); 
+  if (h >= 69) {
+    digitalWrite(led, HIGH);
+    delay(200);
+  }
+  else digitalWrite(led, LOW);
+  Serial.print("Nhiet do: ");
+  Serial.println(t);               
+  Serial.print("Do am: ");
+  Serial.println(h);  
+  Serial.println();               
+  delay(1000);                     
+}
