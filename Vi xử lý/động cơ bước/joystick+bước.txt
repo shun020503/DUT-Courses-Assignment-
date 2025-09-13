@@ -1,0 +1,53 @@
+#include <Stepper.h>
+int bientroX = A0 ; 
+int bientroY = A1 ; 
+int button = 7;   
+const int stepsPerRevolution = 2048; // Số bước 1 vòng quay đối với động cơ bước 28BYJ-48 nên 1 bước quay là 2048/360 độ
+Stepper myStepper = Stepper(stepsPerRevolution, 8, 10, 9, 11); // Cài đặt động cơ bước và cấu hình chân cắm.
+//Stepper myStepper1 = Stepper(stepsPerRevolution, 10, 8, 9, 11);
+
+void setup() {
+ 
+    myStepper.setSpeed(15); // Tốc độ quay khai báo 1-19 Ngoài phạm vi này motor không chạy
+    Serial.begin(9600); // Khởi tạo kết nối Serial
+    pinMode(A0, INPUT);
+    pinMode(A1, INPUT);
+
+
+}
+
+void loop() 
+{
+  int x = analogRead(bientroX);  // doc gia tri cua truc X
+              int y = analogRead(bientroY);  // doc gia tri cua truc Y
+              int KEY = digitalRead(button);  // doc gia tri cua nut nhan
+              if (x==0 and y>=500) {
+                myStepper.step(2048);
+                //digitalWrite(led1,LOW);
+                delay(500);
+              }  
+              else if (x>=0 and y>=1000) {
+                myStepper.step(1024);
+                delay(500);
+                //digitalWrite(led2,LOW);
+              }  
+              else if (x>=700 and y>=500 and y<=550) {
+                myStepper.step(-256);
+                //digitalWrite(led3,LOW);
+                delay(500);
+              }  
+              else if (x>=500 and y==0) {
+                myStepper.step(-512);
+                //digitalWrite(led4,LOW);
+                delay(500);
+              }  
+              else  {
+                
+              }           
+              Serial.print("X="); Serial.println(x);
+              Serial.print("Y="); Serial.println(y);
+              Serial.print("KEY="); Serial.print(KEY); Serial.println();
+              delay(500);//delay để ổn định hơ
+  //if (out == HIGH) { myStepper.step(256);delay(500); }// muốn quay được 90 thuận thì ta lấy 90 nhân với 2048/360 ra 512 chính là số bước cần quay để động cơ quay 90 độ
+  //else { myStepper.step(-512);delay(500);} // tương tự như quay 90 độ thuận nhưng ta thêm dấu trừ chính là quay nghịch                   
+}

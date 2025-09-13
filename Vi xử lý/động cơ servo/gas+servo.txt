@@ -1,0 +1,31 @@
+int const PinGS = A0;          // Khai báo chân cảm biến GAS
+#include <Servo.h>             // Thư viện điều khiển servo
+Servo myservo;                 // Khai báo đối tượng myservo dùng để điều khiển servo
+int servoPin = 9;              // Khai báo chân điều khiển servo
+void setup() {
+  Serial.begin(9600);          //Khởi tạo kết nối Serial
+  myservo.attach(servoPin);    // Cài đặt chức năng điều khiển servo cho chân servoPin
+  pinMode(PinGS, INPUT);       //Thêm chân Input cho GAS
+}
+void loop() {
+  int value = analogRead(PinGS);//Lấy giá trị cảm biến GAS
+  Serial.println(value);        //In ra giá trị ra Serial
+  if (value>250) {              //So sánh giá trị 3 mốc <250;250-150;150-0;
+        myservo.write(180);     //Động cơ servo chạy tới 180 độ
+    //Serial.println(180);
+    delay(100);
+   }
+   else 
+  if (value >150) {
+    myservo.write(90);          //Động cơ servo chạy tới 90 độ
+    //Serial.println(90);
+    delay(100);
+  } 
+ else
+  {
+    myservo.write(0);           ////Động cơ servo chạy tới 0 độ
+    //erial.println(0);
+    delay(100);
+  }
+  delay(500);
+}

@@ -1,0 +1,53 @@
+const int trackingLine = 8;
+const int int1 = 7;
+const int int2 = 6;
+const int speedPin = 9;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(trackingLine, INPUT);
+  pinMode(speedPin, OUTPUT);
+  pinMode(int1, OUTPUT);
+  pinMode(int2, OUTPUT);
+}
+
+void loop() {
+  int out = digitalRead(trackingLine);
+  if (out == HIGH) {
+    analogWrite(speedPin, 200);
+    Forward();
+    Serial.println("HIGH");
+    delay(1000);
+  } else {
+    analogWrite(speedPin, 200);
+    Backward();
+    Serial.println("LOW");
+    delay(1000);
+  }
+  SPEED();
+}
+
+void Backward() {
+  digitalWrite(int1, LOW);
+  digitalWrite(int2, HIGH);
+  delay(1000);
+}
+
+void Forward() {
+  digitalWrite(int1, HIGH);
+  digitalWrite(int2, LOW);
+  delay(1000);
+}
+
+void SPEED() {
+  for (int i = 0; i < 256; i+=10) {
+    analogWrite(speedPin, i);
+    Serial.println(i);
+    delay(30);
+  }
+  for (int i = 255; i >= 0; i-=10) {
+    analogWrite(speedPin, i);
+    Serial.println(i);
+    delay(30);
+  }
+}

@@ -1,0 +1,29 @@
+#include <Servo.h>             // Thư viện điều khiển servo
+Servo myservo;     
+int value;
+int sensor = A0;           // Khai báo đối tượng myservo dùng để điều khiển servo
+int servoPin = 9;              // Khai báo chân điều khiển servo
+void setup() {
+  Serial.begin(9600);          //Khởi tạo kết nối Serial
+  myservo.attach(servoPin);  
+  pinMode(sensor, INPUT);  // Cài đặt chức năng điều khiển servo cho chân servoPin     //Thêm chân Input cho GAS
+}
+void loop() {
+  
+    value = analogRead(sensor);
+    if (value < 700) {
+      myservo.write(180);
+      delay(500);
+      myservo.write(0);
+      delay(500);
+    }
+    else {
+      myservo.write(90);
+      delay(500);
+      myservo.write(0);
+      delay(500);
+    }
+  //}
+  //myservo.write(0);
+}
+;

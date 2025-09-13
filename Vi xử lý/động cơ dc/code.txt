@@ -1,0 +1,96 @@
+#define keypin = A0; //analog key input
+int E1 = 5; // E1, E2 speed control
+int E2 = 6;
+int M1 = 4; // M1, M2 direction control
+int M2 = 7;
+unsigned long sampleTime;
+unsigned int SampleInterval = 100; // sampling time is 0.1s
+int adc_key_val[5] = {50, 200, 400, 600, 800}; // threshold for comparison
+bool binkey; // flag for against key shake
+int num_key = 5;   // 5 keys
+int adc_key_in;
+int key = -1;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  if (millis() - sampleTime >= SampleInterval) {
+    sampleTime = millis();
+    adc_key_in = analogRead(A0);
+    if (adc_key_in < 1000) {
+      if (binkey == 0) binkey = -1;
+      else key = get_key(adc_key_in);
+    }
+    else {
+      key = -1;
+      binkey = 0;
+    }
+  }
+  if (key >= 0) {
+    switch(key) {
+      case 0: {
+        Serial.println("S1 OK");
+        advance(100,100); // move forward
+        break;
+      }
+      case 1: {
+        Serial.println("S2 OK");
+        back_off(100,100); // move backward
+        break;
+      }
+      case 2: {
+        Serial.println("S3 OK");
+        turn_L(100, 100); // turn left
+        break;
+      }
+      case 3: {
+        Serial.println("S4 OK");
+        turn_R(100,100); // turn right
+        break;
+      }
+      case 4: {
+        Serial.println("S5 OK");
+        stop();
+        break;
+      }
+    }
+  }
+}
+int get_key(unsigned int input) {
+  int k;
+  for (k=0; k<num_key; k++) {
+    if (input < adc_key_val[k]) return k; // compare threshold
+  }
+  if (k>= num_key) k = -1;
+  return k;
+}
+void stop(void) {
+  digitalWrite(E1,LOW);
+  digitalWrite(E2,LOW);
+}
+void advance(char a, char b) {
+  analogWrite(E1, a);
+  digitalWrite(M1, HIGH);
+  analogWrite(E2, b);
+  digitalWrite(M2, HIGH);
+}
+void back_off(char a, char b) {
+  analogWrite(E1, a);
+  digitalWrite(M1, LOW);
+  analogWrite(E1, b);
+  digitalWrite(M2, LOW);
+}
+void turn_L(char a, char b) {
+  analogWrite(E1, a);
+  digitalWrite(M1, LOW);
+  analogWrite(E2, b);
+  digitalWrite(M2, HIGH);
+}
+void turn_R(char a, char b) {
+  analogWrite(E1, a);
+  digitalWrite(M1, HIGH);
+  analogWrite(E2, b);
+  digitalWrite(M2, LOW);
+}

@@ -1,0 +1,61 @@
+// Adafruit Motor shield library
+// copyright Adafruit Industries LLC, 2009
+// this code is public domain, enjoy!
+
+#include <AFMotor.h>
+
+AF_DCMotor motor(3);
+
+void setup() {
+  Serial.begin(9600);           // set up Serial library at 9600 bps
+  Serial.println("Motor test!");
+  // turn on motor
+  motor.setSpeed(200);
+  motor.run(RELEASE);
+}
+
+void loop() {
+  char input;
+  if (Serial.available()>0) input = Serial.read();
+  switch(input) {
+  case '0':
+  {
+    Serial.print("BACKWARD");  
+    motor.run(BACKWARD);     // động cơ lùi  
+    delay(1000);  
+    break;
+  }
+  case '1':
+  {
+    Serial.print("FORWARD");     
+    motor.run(FORWARD);      // động cơ tiến 
+    delay(1000);
+    break;
+   }
+  case '2':
+  {
+    Serial.print("STOP");    
+    motor.run(RELEASE);      //   dừng động cơ  
+    delay(1000);
+    break;
+  }
+  case '3':
+  {
+    Serial.print("ACCELERATE"); 
+    for (int speed = 0; speed <= 255; speed++) {
+      motor.setSpeed(speed); // tăng tốc độ từ 0 đến 255
+      delay(10);
+    }
+    break;
+  }
+  case '4':
+  {
+    Serial.print("DECELERATE"); 
+    for (int speed = 255; speed >= 0; speed--) {
+      motor.setSpeed(speed); // giảm tốc độ từ 255 về 0
+      delay(10);
+    }
+    break;
+  }
+  }
+}
